@@ -1,0 +1,7 @@
+composer.phar
+composer.lock
+phpunit.xml
+vendor/
+public/
+resources/docker/
+nbproject/
