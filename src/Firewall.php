@@ -14,7 +14,7 @@ class Firewall
     }
 
     /**
-     * Add an IP address to blacklist
+     * Blacklist an IP address
      *
      * @param string $ip
      * @return int
