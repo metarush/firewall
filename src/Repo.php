@@ -25,9 +25,19 @@ class Repo
     {
         $data = [
             'ip'       => trim($ip),
-            'datetime' => date('Y-m-d H:i:s')
+            'dateTime' => date('Y-m-d H:i:s')
         ];
 
         return $this->mapper->create($this->cfg->getBlacklistTable(), $data);
+    }
+
+    public function addToWhitelist(string $ip): int
+    {
+        $data = [
+            'ip'       => trim($ip),
+            'dateTime' => date('Y-m-d H:i:s')
+        ];
+
+        return $this->mapper->create($this->cfg->getWhitelistTable(), $data);
     }
 }
