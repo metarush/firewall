@@ -2,10 +2,11 @@
 
 error_reporting(E_ALL);
 
-require_once __DIR__.'/Common.php';
+require_once __DIR__ . '/Common.php';
 
 class RepoTest extends Common
 {
+
     public function testAddToBlacklist()
     {
         $ip = '1.2.3.4';

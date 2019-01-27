@@ -6,13 +6,47 @@ use \PHPUnit\Framework\TestCase;
 use MetaRush\Firewall;
 use MetaRush\DataMapper;
 
+/**
+ * Common setUp() and tearDown() for unit tests
+ *
+ * Note: Annotation in field methods are required for IDE's autocomplete
+ */
 class Common extends TestCase
 {
+    /**
+     *
+     * @var Firewall\Config
+     */
     protected $cfg;
+
+    /**
+     *
+     * @var \PDO
+     */
     protected $pdo;
+
+    /**
+     *
+     * @var string
+     */
     protected $dbFile;
+
+    /**
+     *
+     * @var Firewall\Repo
+     */
     protected $repo;
+
+    /**
+     *
+     * @var DataMapper\DataMapper
+     */
     protected $mapper;
+
+    /**
+     *
+     * @var Firewall\Firewall
+     */
     protected $firewall;
 
     public function setUp()
@@ -64,7 +98,7 @@ class Common extends TestCase
 
         $this->repo = new Firewall\Repo($this->cfg, $this->mapper);
 
-        $this->firewall = new Firewall\Firewall($this->cfg, $this->repo);
+        $this->firewall = new Firewall\Firewall($this->repo);
     }
 
     public function tearDown()
