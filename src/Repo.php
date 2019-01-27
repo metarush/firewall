@@ -15,6 +15,12 @@ class Repo
         $this->mapper = $mapper;
     }
 
+    /**
+     * Add an IP address to blacklist
+     *
+     * @param string $ip
+     * @return int
+     */
     public function addToBlacklist(string $ip): int
     {
         $data = [
