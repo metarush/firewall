@@ -32,4 +32,15 @@ class Firewall
     {
         return $this->repo->addToWhitelist($ip);
     }
+
+    /**
+     * Returns true if $ip is blacklisted, false otherwise
+     *
+     * @param string $ip
+     * @return bool
+     */
+    public function isBlacklisted(string $ip): bool
+    {
+        return $this->repo->isBlacklisted($ip);
+    }
 }
