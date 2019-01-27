@@ -1,0 +1,24 @@
+{
+    "name": "metarush/firewall",
+    "type": "library",
+    "description": "A firewall for web applications that wants to blacklist/whitelist IP addresses",
+    "keywords": ["php", "firewall", "blacklist", "whitelist", "ip address", "throttle", "rate limiting", "brute-force"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "metarush/firewall contributors",
+            "homepage": "https://github.com/metarush/firewall/graphs/contributors"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "MetaRush\\Firewall\\": "src"
+        }
+    },
+    "require": {
+        "metarush/data-mapper": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    }
+}
