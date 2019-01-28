@@ -85,4 +85,9 @@ class Repo
 
         $this->mapper->delete($table, $where);
     }
+
+    public function emptyTable(string $table): void
+    {
+        $this->mapper->delete($table);
+    }
 }

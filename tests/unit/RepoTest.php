@@ -32,7 +32,7 @@ class RepoTest extends Common
     public function testIpLogged()
     {
         // seed data
-        $this->repo->addIp($this->testIp, $this->testTable);
+        $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
 
         $logged = $this->repo->ipLogged($this->testIp, $this->testTable);
 
@@ -43,7 +43,7 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->repo->addIp($this->testIp, $this->testTable, true);
+            $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
 
         $count = $this->repo->countIp($this->testIp, $this->testTable);
 
@@ -54,11 +54,24 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->repo->addIp($this->testIp, $this->testTable, true);
+            $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
 
         $this->repo->deleteIp($this->testIp, $this->testTable);
 
         $rows = $this->mapper->findAll($this->testTable, ['ip' => $this->testIp]);
+
+        $this->assertCount(0, $rows);
+    }
+
+    public function testEmptyTable()
+    {
+        // seed data
+        for ($i = 0; $i < 5; $i++)
+            $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
+
+        $this->repo->emptyTable($this->testTable);
+
+        $rows = $this->mapper->findAll($this->testTable);
 
         $this->assertCount(0, $rows);
     }
