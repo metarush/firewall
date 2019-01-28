@@ -14,24 +14,24 @@ class Firewall
     }
 
     /**
-     * Block $ip if it's not whitelisted
+     * Blacklist $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
      */
-    public function addToBlacklist(string $ip): void
+    public function blacklist(string $ip): void
     {
-        if (!$this->isWhitelisted($ip))
+        if (!$this->whitelisted($ip))
             $this->repo->addIp($ip, $this->cfg->getBlacklistTable());
     }
 
     /**
-     * Whitelist an IP address
+     * Whitelist $ip so it won't be blocked no matter what
      *
      * @param string $ip
      * @return void
      */
-    public function addToWhitelist(string $ip): void
+    public function whitelist(string $ip): void
     {
         $this->repo->addIp($ip, $this->cfg->getWhitelistTable());
     }
@@ -42,7 +42,7 @@ class Firewall
      * @param string $ip
      * @return bool
      */
-    public function isBlacklisted(string $ip): bool
+    public function blackListed(string $ip): bool
     {
         return $this->repo->ipLogged($ip, $this->cfg->getBlacklistTable());
     }
@@ -53,7 +53,7 @@ class Firewall
      * @param string $ip
      * @return bool
      */
-    public function isWhitelisted(string $ip): bool
+    public function whitelisted(string $ip): bool
     {
         return $this->repo->ipLogged($ip, $this->cfg->getWhitelistTable());
     }
@@ -71,7 +71,7 @@ class Firewall
         $count = $this->repo->countIp($ip, $this->cfg->getFailCountTable());
 
         if ($count >= $this->cfg->getFailCount()) {
-            $this->addToBlacklist($ip);
+            $this->blacklist($ip);
             $this->repo->addIp($ip, $this->cfg->getBlockCountTable());
             $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
         }
