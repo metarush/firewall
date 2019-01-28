@@ -26,7 +26,7 @@ class FirewallTest extends Common
         // check if FailCountTable is empty
         $this->assertCount(0, $rows);
 
-        $logged = $this->repo->isIpLogged($this->testIp, $this->cfg->getBlacklistTable());
+        $logged = $this->repo->ipLogged($this->testIp, $this->cfg->getBlacklistTable());
 
         // check if $ip was transferred to BlacklistTable
         $this->assertTrue($logged);

@@ -44,7 +44,7 @@ class Firewall
      */
     public function isBlacklisted(string $ip): bool
     {
-        return $this->repo->isIpLogged($ip, $this->cfg->getBlacklistTable());
+        return $this->repo->ipLogged($ip, $this->cfg->getBlacklistTable());
     }
 
     /**
@@ -55,7 +55,7 @@ class Firewall
      */
     public function isWhitelisted(string $ip): bool
     {
-        return $this->repo->isIpLogged($ip, $this->cfg->getWhitelistTable());
+        return $this->repo->ipLogged($ip, $this->cfg->getWhitelistTable());
     }
 
     /**

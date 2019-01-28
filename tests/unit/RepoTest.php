@@ -29,12 +29,12 @@ class RepoTest extends Common
         $this->assertCount(3, $rows);
     }
 
-    public function testIsIpLogged()
+    public function testIpLogged()
     {
         // seed data
         $this->repo->addIp($this->testIp, $this->testTable);
 
-        $logged = $this->repo->isIpLogged($this->testIp, $this->testTable);
+        $logged = $this->repo->ipLogged($this->testIp, $this->testTable);
 
         $this->assertTrue($logged);
     }

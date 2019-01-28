@@ -32,7 +32,7 @@ class Repo
             self::DATETIME_COLUMN => date('Y-m-d H:i:s')
         ];
 
-        if (!$this->isIpLogged($ip, $table) OR $allowDuplicate)
+        if (!$this->ipLogged($ip, $table) OR $allowDuplicate)
             $this->mapper->create($table, $data);
     }
 
@@ -43,7 +43,7 @@ class Repo
      * @param string $table
      * @return bool
      */
-    public function isIpLogged(string $ip, string $table): bool
+    public function ipLogged(string $ip, string $table): bool
     {
         $where = [
             self::IP_COLUMN => trim($ip)
