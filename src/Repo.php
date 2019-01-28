@@ -22,16 +22,18 @@ class Repo
      *
      * @param string $ip
      * @param string $table
+     * @param type $allowDuplicate
      * @return void
      */
-    public function addIp(string $ip, string $table): void
+    public function addIp(string $ip, string $table, $allowDuplicate = false): void
     {
         $data = [
             self::IP_COLUMN       => $ip,
             self::DATETIME_COLUMN => date('Y-m-d H:i:s')
         ];
 
-        $this->mapper->create($table, $data);
+        if (!$this->isIpLogged($ip, $table) OR $allowDuplicate)
+            $this->mapper->create($table, $data);
     }
 
     /**
