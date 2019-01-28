@@ -57,7 +57,9 @@ class Common extends TestCase
 
         $this->cfg = (new Firewall\Config)
             ->setBlacklistTable('blacklist')
-            ->setWhitelistTable('whitelist');
+            ->setWhitelistTable('whitelist')
+            ->setFailCountTable('failCount')
+            ->setBlockCountTable('blackCount');
 
         // ----------------------------------------------
         // setup test db
@@ -75,14 +77,24 @@ class Common extends TestCase
 
             $this->pdo->query('
                 CREATE TABLE `' . $this->cfg->getBlacklistTable() . '` (
-                `id`        INTEGER PRIMARY KEY AUTOINCREMENT,
                 `ip`        TEXT,
                 `dateTime`  TEXT
             )');
 
             $this->pdo->query('
                 CREATE TABLE `' . $this->cfg->getWhitelistTable() . '` (
-                `id`        INTEGER PRIMARY KEY AUTOINCREMENT,
+                `ip`        TEXT,
+                `dateTime`  TEXT
+            )');
+
+            $this->pdo->query('
+                CREATE TABLE `' . $this->cfg->getFailCountTable() . '` (
+                `ip`        TEXT,
+                `dateTime`  TEXT
+            )');
+
+            $this->pdo->query('
+                CREATE TABLE `' . $this->cfg->getBlockCountTable() . '` (
                 `ip`        TEXT,
                 `dateTime`  TEXT
             )');
@@ -98,7 +110,7 @@ class Common extends TestCase
 
         $this->repo = new Firewall\Repo($this->cfg, $this->mapper);
 
-        $this->firewall = new Firewall\Firewall($this->repo);
+        $this->firewall = new Firewall\Firewall($this->cfg, $this->repo);
     }
 
     public function tearDown()

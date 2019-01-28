@@ -8,39 +8,25 @@ class RepoTest extends Common
 {
     private $testIp = '1.2.3.4';
 
-    public function testAddToBlacklist()
+    public function testAddIp()
     {
-        $lastInsertId = $this->repo->addToBlacklist($this->testIp);
+        $this->repo->addIp($this->testIp, $this->cfg->getBlacklistTable());
 
-        $row = $this->mapper->findOne($this->cfg->getBlacklistTable(), ['id' => 1]);
+        $row = $this->mapper->findOne($this->cfg->getBlacklistTable(), []);
 
         $dateTimeRegex = '~^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$~';
 
-        $this->assertEquals(1, $lastInsertId);
         $this->assertEquals($this->testIp, $row['ip']);
         $this->assertRegExp($dateTimeRegex, $row['dateTime']);
     }
 
-    public function testAddToWhitelist()
-    {
-        $lastInsertId = $this->repo->addToWhitelist($this->testIp);
-
-        $row = $this->mapper->findOne($this->cfg->getWhitelistTable(), ['id' => 1]);
-
-        $dateTimeRegex = '~^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$~';
-
-        $this->assertEquals(1, $lastInsertId);
-        $this->assertEquals($this->testIp, $row['ip']);
-        $this->assertRegExp($dateTimeRegex, $row['dateTime']);
-    }
-
-    public function testIsBlacklisted()
+    public function testIsIpLogged()
     {
         // seed data
-        $this->repo->addToBlacklist($this->testIp);
+        $this->repo->addIp($this->testIp, $this->cfg->getBlacklistTable());
 
-        $blacklisted = $this->repo->isBlacklisted($this->testIp);
+        $logged = $this->repo->isIpLogged($this->testIp, $this->cfg->getBlacklistTable());
 
-        $this->assertTrue($blacklisted);
+        $this->assertTrue($logged);
     }
 }

@@ -18,50 +18,36 @@ class Repo
     }
 
     /**
-     * Blacklist an IP address
+     * Add IP address to table
      *
      * @param string $ip
-     * @return int
+     * @param string $table
+     * @return void
      */
-    public function addToBlacklist(string $ip): int
+    public function addIp(string $ip, string $table): void
     {
         $data = [
-            self::IP_COLUMN       => trim($ip),
+            self::IP_COLUMN       => $ip,
             self::DATETIME_COLUMN => date('Y-m-d H:i:s')
         ];
 
-        return $this->mapper->create($this->cfg->getBlacklistTable(), $data);
+        $this->mapper->create($table, $data);
     }
 
     /**
-     * Whitelist an IP address
+     *  Returns true if $ip is logged in $table, false otherwise
      *
      * @param string $ip
-     * @return int
-     */
-    public function addToWhitelist(string $ip): int
-    {
-        $data = [
-            self::IP_COLUMN       => trim($ip),
-            self::DATETIME_COLUMN => date('Y-m-d H:i:s')
-        ];
-
-        return $this->mapper->create($this->cfg->getWhitelistTable(), $data);
-    }
-
-    /**
-     * Returns true if $ip is blacklisted, false otherwise
-     *
-     * @param string $ip
+     * @param string $table
      * @return bool
      */
-    public function isBlacklisted(string $ip): bool
+    public function isIpLogged(string $ip, string $table): bool
     {
         $where = [
             self::IP_COLUMN => trim($ip)
         ];
 
-        $row = $this->mapper->findOne($this->cfg->getBlacklistTable(), $where);
+        $row = $this->mapper->findOne($table, $where);
 
         return is_array($row);
     }
