@@ -14,14 +14,15 @@ class Firewall
     }
 
     /**
-     * Blacklist an IP address
+     * Block $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
      */
     public function addToBlacklist(string $ip): void
     {
-        $this->repo->addIp($ip, $this->cfg->getBlacklistTable());
+        if (!$this->isWhitelisted($ip))
+            $this->repo->addIp($ip, $this->cfg->getBlacklistTable());
     }
 
     /**
@@ -57,8 +58,22 @@ class Firewall
         return $this->repo->isIpLogged($ip, $this->cfg->getWhitelistTable());
     }
 
-    public function countFailThenBlock(string $ip)
+    /**
+     * Block $ip if it reaches the value of Config->getFailCount()
+     *
+     * @param string $ip
+     * @return void
+     */
+    public function preventBruteForce(string $ip): void
     {
+        $this->repo->addIp($ip, $this->cfg->getFailCountTable(), true);
 
+        $count = $this->repo->countIp($ip, $this->cfg->getFailCountTable());
+
+        if ($count >= $this->cfg->getFailCount()) {
+            $this->addToBlacklist($ip);
+            $this->repo->addIp($ip, $this->cfg->getBlockCountTable());
+            $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+        }
     }
 }

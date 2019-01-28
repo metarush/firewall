@@ -18,7 +18,7 @@ class Repo
     }
 
     /**
-     * Add IP address to table
+     * Add $ip to $table
      *
      * @param string $ip
      * @param string $table
@@ -68,5 +68,21 @@ class Repo
         ];
 
         return count($this->mapper->findAll($table, $where));
+    }
+
+    /**
+     * Delete $ip from $table
+     *
+     * @param string $ip
+     * @param string $table
+     * @return void
+     */
+    public function deleteIp(string $ip, string $table): void
+    {
+        $where = [
+            self::IP_COLUMN => trim($ip)
+        ];
+
+        $this->mapper->delete($table, $where);
     }
 }

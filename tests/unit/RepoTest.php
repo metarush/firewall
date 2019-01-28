@@ -41,11 +41,25 @@ class RepoTest extends Common
 
     public function testCountIp()
     {
+        // seed data
         for ($i = 0; $i < 5; $i++)
             $this->repo->addIp($this->testIp, $this->testTable, true);
 
         $count = $this->repo->countIp($this->testIp, $this->testTable);
 
         $this->assertEquals(5, $count);
+    }
+
+    public function testDeleteIp()
+    {
+        // seed data
+        for ($i = 0; $i < 5; $i++)
+            $this->repo->addIp($this->testIp, $this->testTable, true);
+
+        $this->repo->deleteIp($this->testIp, $this->testTable);
+
+        $rows = $this->mapper->findAll($this->testTable, ['ip' => $this->testIp]);
+
+        $this->assertCount(0, $rows);
     }
 }
