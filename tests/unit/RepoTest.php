@@ -22,9 +22,8 @@ class RepoTest extends Common
 
     public function testAddIpAllowDuplicate()
     {
-        $this->repo->addIp($this->testIp, $this->testTable, true);
-        $this->repo->addIp($this->testIp, $this->testTable, true);
-        $this->repo->addIp($this->testIp, $this->testTable, true);
+        for ($i = 0; $i < 3; $i++)
+            $this->repo->addIp($this->testIp, $this->testTable, true);
 
         $rows = $this->mapper->findAll($this->testTable, ['ip' => $this->testIp]);
         $this->assertCount(3, $rows);
@@ -38,5 +37,15 @@ class RepoTest extends Common
         $logged = $this->repo->isIpLogged($this->testIp, $this->testTable);
 
         $this->assertTrue($logged);
+    }
+
+    public function testCountIp()
+    {
+        for ($i = 0; $i < 5; $i++)
+            $this->repo->addIp($this->testIp, $this->testTable, true);
+
+        $count = $this->repo->countIp($this->testIp, $this->testTable);
+
+        $this->assertEquals(5, $count);
     }
 }

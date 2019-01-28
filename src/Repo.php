@@ -53,4 +53,20 @@ class Repo
 
         return is_array($row);
     }
+
+    /**
+     * Returns how many times $ip is logged inside $table
+     *
+     * @param string $ip
+     * @param string $table
+     * @return int
+     */
+    public function countIp(string $ip, string $table): int
+    {
+        $where = [
+            self::IP_COLUMN => trim($ip)
+        ];
+
+        return count($this->mapper->findAll($table, $where));
+    }
 }
