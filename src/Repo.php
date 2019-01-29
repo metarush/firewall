@@ -97,5 +97,22 @@ class Repo
         $this->mapper->delete($table);
     }
 
+    /**
+     * Flush IPs in $table that are there for more than $elapsed seconds
+     *
+     * @param string $table
+     * @param int $elapsed
+     * @return void
+     */
+    public function flushIps(string $table, int $elapsed): void
+    {
+        $strtotime = strtotime('-' . $elapsed . ' seconds');
+        $past = date('Y-m-d H:i:s', $strtotime);
 
+        $where = [
+            self::DATETIME_COLUMN . "  <=  '" . $past . "'"
+        ];
+
+        $this->mapper->delete($table, $where);
+    }
 }

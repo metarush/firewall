@@ -7,6 +7,8 @@ require_once __DIR__ . '/Common.php';
 class RepoTest extends Common
 {
     private $testIp = '1.2.3.4';
+    private $where = ['ip' => '1.2.3.4'];
+    private $data = ['ip' => '1.2.3.4'];
     private $testTable = 'lightBan';
 
     public function testAddIp()
@@ -25,14 +27,14 @@ class RepoTest extends Common
         for ($i = 0; $i < 3; $i++)
             $this->repo->addIp($this->testIp, $this->testTable, true);
 
-        $rows = $this->mapper->findAll($this->testTable, ['ip' => $this->testIp]);
+        $rows = $this->mapper->findAll($this->testTable, $this->where);
         $this->assertCount(3, $rows);
     }
 
     public function testIpLogged()
     {
         // seed data
-        $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
+        $this->mapper->create($this->testTable, $this->data);
 
         $logged = $this->repo->ipLogged($this->testIp, $this->testTable);
 
@@ -43,7 +45,7 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
+            $this->mapper->create($this->testTable, $this->data);
 
         $count = $this->repo->countIp($this->testIp, $this->testTable);
 
@@ -54,11 +56,11 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
+            $this->mapper->create($this->testTable, $this->data);
 
         $this->repo->deleteIp($this->testIp, $this->testTable);
 
-        $rows = $this->mapper->findAll($this->testTable, ['ip' => $this->testIp]);
+        $rows = $this->mapper->findAll($this->testTable, $this->where);
 
         $this->assertCount(0, $rows);
     }
@@ -67,12 +69,33 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->mapper->create($this->testTable, ['ip' => $this->testIp]);
+            $this->mapper->create($this->testTable, $this->data);
 
         $this->repo->emptyTable($this->testTable);
 
         $rows = $this->mapper->findAll($this->testTable);
 
         $this->assertCount(0, $rows);
+    }
+
+    public function testFlushIps()
+    {
+        $data = [
+            'ip'       => '1.2.3.4',
+            'dateTime' => date('Y-m-d H:i:s')
+        ];
+
+        // seed data
+        $this->mapper->create($this->testTable, $data);
+
+        $elapsedTime = 2;
+
+        // simulate elapsed time (value lower than $elapsedTime should fail this test)
+        sleep($elapsedTime);
+
+        $this->repo->flushIps($this->testTable, $elapsedTime);
+
+        $row = $this->mapper->findOne($this->testTable, $this->where);
+        $this->assertNull($row);
     }
 }
