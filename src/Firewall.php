@@ -14,15 +14,15 @@ class Firewall
     }
 
     /**
-     * Blacklist $ip if it's not whitelisted
+     * Ban $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
      */
-    public function blacklist(string $ip): void
+    public function ban(string $ip): void
     {
         if (!$this->whitelisted($ip))
-            $this->repo->addIp($ip, $this->cfg->getBlacklistTable());
+            $this->repo->addIp($ip, $this->cfg->getLightBanTable());
     }
 
     /**
@@ -37,14 +37,14 @@ class Firewall
     }
 
     /**
-     * Returns true if $ip is blacklisted, false otherwise
+     * Returns true if $ip is banned, false otherwise
      *
      * @param string $ip
      * @return bool
      */
-    public function blackListed(string $ip): bool
+    public function banned(string $ip): bool
     {
-        return $this->repo->ipLogged($ip, $this->cfg->getBlacklistTable());
+        return $this->repo->ipLogged($ip, $this->cfg->getLightBanTable());
     }
 
     /**
@@ -71,9 +71,11 @@ class Firewall
         $count = $this->repo->countIp($ip, $this->cfg->getFailCountTable());
 
         if ($count >= $this->cfg->getFailCount()) {
-            $this->blacklist($ip);
-            $this->repo->addIp($ip, $this->cfg->getBlockCountTable());
+
+            $this->ban($ip);
+            $this->repo->addIp($ip, $this->cfg->getBlockCountTable(), true);
             $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+
         }
     }
 }

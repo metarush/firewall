@@ -56,10 +56,10 @@ class Common extends TestCase
         // ----------------------------------------------
 
         $this->cfg = (new Firewall\Config)
-            ->setBlacklistTable('blacklist')
+            ->setLightBanTable('lightBan')
             ->setWhitelistTable('whitelist')
             ->setFailCountTable('failCount')
-            ->setBlockCountTable('blackCount');
+            ->setBlockCountTable('blockCount');
 
         // ----------------------------------------------
         // setup test db
@@ -76,7 +76,7 @@ class Common extends TestCase
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             $this->pdo->query('
-                CREATE TABLE `' . $this->cfg->getBlacklistTable() . '` (
+                CREATE TABLE `' . $this->cfg->getLightBanTable() . '` (
                 `ip`        TEXT,
                 `dateTime`  TEXT
             )');

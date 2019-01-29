@@ -5,11 +5,11 @@ namespace MetaRush\Firewall;
 class Config
 {
     /**
-     * Name of the blacklist database table
+     * Name of the light ban database table
      *
      * @var string
      */
-    private $blacklistTable;
+    private $lightBanTable;
 
     /**
      * Name of the whitelist database table
@@ -132,14 +132,14 @@ class Config
         return $this;
     }
 
-    public function getBlacklistTable(): string
+    public function getLightBanTable(): string
     {
-        return $this->blacklistTable;
+        return $this->lightBanTable;
     }
 
-    public function setBlacklistTable(string $blacklistTable)
+    public function setLightBanTable(string $lightBanTable)
     {
-        $this->blacklistTable = $blacklistTable;
+        $this->lightBanTable = $lightBanTable;
 
         return $this;
     }

@@ -7,7 +7,7 @@ require_once __DIR__ . '/Common.php';
 class RepoTest extends Common
 {
     private $testIp = '1.2.3.4';
-    private $testTable = 'blacklist';
+    private $testTable = 'lightBan';
 
     public function testAddIp()
     {
