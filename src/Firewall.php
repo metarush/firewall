@@ -14,7 +14,7 @@ class Firewall
     }
 
     /**
-     * Light ban $ip if it's not whitelisted
+     * Light-ban $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
@@ -30,7 +30,7 @@ class Firewall
     }
 
     /**
-     * Ban $ip for an extended period if it's not whitelisted
+     * Extended-ban $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
@@ -46,7 +46,7 @@ class Firewall
     }
 
     /**
-     * Returns true if $ip is banned (light or extended), false otherwise
+     * Returns true if $ip is banned (light/extended), false otherwise
      *
      * @param string $ip
      * @return bool
@@ -63,7 +63,7 @@ class Firewall
     }
 
     /**
-     * Whitelist $ip so it won't be blocked no matter what
+     * Whitelist $ip so it won't be banned no matter what
      *
      * @param string $ip
      * @return void
@@ -125,12 +125,22 @@ class Firewall
     }
 
     /**
-     * Release IPs that are light banned
+     * Release IPs that are light-banned
      *
      * @return void
      */
     public function flushLightBanned(): void
     {
         $this->repo->emptyTable($this->cfg->getLightBanTable());
+    }
+
+    /**
+     * Release IPs that are extended-banned
+     *
+     * @return void
+     */
+    public function flushExtendedBanned(): void
+    {
+        $this->repo->emptyTable($this->cfg->getExtendedBanTable());
     }
 }

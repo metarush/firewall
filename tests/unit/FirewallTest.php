@@ -208,4 +208,17 @@ class FirewallTest extends Common
         $rows = $this->mapper->findAll($this->cfg->getLightBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
+
+    public function testFlushExtendedBanned()
+    {
+        // seed
+        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
+
+        $this->firewall->flushExtendedBanned();
+
+        // test if IPs are flushed from ExtendedBanTable
+        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $this->assertCount(0, $rows);
+    }
 }
