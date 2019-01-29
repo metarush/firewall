@@ -111,9 +111,10 @@ class Common extends TestCase
         // init main classes
         // ----------------------------------------------
 
-        $this->mapper = new DataMapper\DataMapper(
-            new DataMapper\Adapters\AtlasQuery($dsn, null, null)
-        );
+        $factory = (new DataMapper\Factory())
+            ->setDsn($dsn);
+
+        $this->mapper = $factory->build();
 
         $this->repo = new Firewall\Repo($this->cfg, $this->mapper);
 
