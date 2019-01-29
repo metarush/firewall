@@ -14,12 +14,12 @@ class Firewall
     }
 
     /**
-     * Ban $ip if it's not whitelisted
+     * Light ban $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
      */
-    public function ban(string $ip): void
+    public function lightBan(string $ip): void
     {
         if (!$this->whitelisted($ip))
             $this->repo->addIp($ip, $this->cfg->getLightBanTable());
@@ -72,7 +72,7 @@ class Firewall
 
         if ($count >= $this->cfg->getFailCount()) {
 
-            $this->ban($ip);
+            $this->lightBan($ip);
             $this->repo->addIp($ip, $this->cfg->getBlockCountTable(), true);
             $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
 
