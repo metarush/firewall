@@ -29,6 +29,12 @@ class Firewall
         $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
     }
 
+    /**
+     * Ban $ip for an extended period if it's not whitelisted
+     *
+     * @param string $ip
+     * @return void
+     */
     public function extendedBan(string $ip): void
     {
         if ($this->whitelisted($ip))
@@ -40,6 +46,23 @@ class Firewall
     }
 
     /**
+     * Returns true if $ip is banned (light or extended), false otherwise
+     *
+     * @param string $ip
+     * @return bool
+     */
+    public function banned(string $ip): bool
+    {
+        if ($this->repo->ipLogged($ip, $this->cfg->getLightBanTable()))
+            return true;
+
+        if ($this->repo->ipLogged($ip, $this->cfg->getExtendedBanTable()))
+            return true;
+
+        return false;
+    }
+
+    /**
      * Whitelist $ip so it won't be blocked no matter what
      *
      * @param string $ip
@@ -48,17 +71,6 @@ class Firewall
     public function whitelist(string $ip): void
     {
         $this->repo->addIp($ip, $this->cfg->getWhitelistTable());
-    }
-
-    /**
-     * Returns true if $ip is banned, false otherwise
-     *
-     * @param string $ip
-     * @return bool
-     */
-    public function banned(string $ip): bool
-    {
-        return $this->repo->ipLogged($ip, $this->cfg->getLightBanTable());
     }
 
     /**
