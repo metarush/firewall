@@ -11,6 +11,9 @@ class RepoTest extends Common
     private $data = ['ip' => '1.2.3.4'];
     private $testTable = 'lightBan';
 
+    /**
+     * test addIp
+     */
     public function testAddIp()
     {
         $this->repo->addIp($this->testIp, $this->testTable);
@@ -22,6 +25,9 @@ class RepoTest extends Common
         $this->assertRegExp($dateTimeRegex, $row['dateTime']);
     }
 
+    /**
+     * test addIp with $allowDuplicate param
+     */
     public function testAddIpAllowDuplicate()
     {
         for ($i = 0; $i < 3; $i++)
@@ -31,6 +37,10 @@ class RepoTest extends Common
         $this->assertCount(3, $rows);
     }
 
+    /**
+     * test ipLogged
+     *
+     */
     public function testIpLogged()
     {
         // seed data
@@ -41,6 +51,9 @@ class RepoTest extends Common
         $this->assertTrue($logged);
     }
 
+    /**
+     * test countIp
+     */
     public function testCountIp()
     {
         // seed data
@@ -52,6 +65,9 @@ class RepoTest extends Common
         $this->assertEquals(5, $count);
     }
 
+    /**
+     * test deleteIp
+     */
     public function testDeleteIp()
     {
         // seed data
@@ -65,6 +81,9 @@ class RepoTest extends Common
         $this->assertCount(0, $rows);
     }
 
+    /**
+     * test emptyTable
+     */
     public function testEmptyTable()
     {
         // seed data
@@ -78,6 +97,9 @@ class RepoTest extends Common
         $this->assertCount(0, $rows);
     }
 
+    /**
+     * test flushIps
+     */
     public function testFlushIps()
     {
         $data = [
