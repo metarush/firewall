@@ -6,6 +6,7 @@ class FirewallTest extends Common
 {
     private $testIp = '1.2.3.4';
     private $where = ['ip' => '1.2.3.4'];
+    private $data = ['ip' => '1.2.3.4'];
 
     /**
      * test lightBan
@@ -29,8 +30,8 @@ class FirewallTest extends Common
 
     public function testLightBanWhitelisted()
     {
-        // seed data
-        $this->mapper->create($this->cfg->getWhitelistTable(), ['ip' => $this->testIp]);
+        // seed
+        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
 
         $this->firewall->lightBan($this->testIp);
 
@@ -64,8 +65,8 @@ class FirewallTest extends Common
      */
     public function testBannedLight()
     {
-        // seed data
-        $this->mapper->create($this->cfg->getLightBanTable(), ['ip' => $this->testIp]);
+        // seed
+        $this->mapper->create($this->cfg->getLightBanTable(), $this->data);
 
         $banned = $this->firewall->banned($this->testIp);
 
@@ -77,8 +78,8 @@ class FirewallTest extends Common
      */
     public function testBannedExtended()
     {
-        // seed data
-        $this->mapper->create($this->cfg->getExtendedBanTable(), ['ip' => $this->testIp]);
+        // seed
+        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
 
         $banned = $this->firewall->banned($this->testIp);
 
@@ -101,8 +102,8 @@ class FirewallTest extends Common
      */
     public function testWhitelisted()
     {
-        // seed data
-        $this->mapper->create($this->cfg->getWhitelistTable(), ['ip' => $this->testIp]);
+        // seed
+        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
 
         $whitelisted = $this->firewall->whitelisted($this->testIp);
 
@@ -160,5 +161,51 @@ class FirewallTest extends Common
         // test if ip is now on extendedBanTable
         $row = $this->mapper->findOne($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertIsArray($row);
+    }
+
+    /**
+     * test flushExpired
+     */
+    public function testFlushExpired()
+    {
+        // seed
+        $data = [
+            'ip'       => '1.2.3.4',
+            'dateTime' => date('Y-m-d H:i:s')
+        ];
+        $this->mapper->create($this->cfg->getLightBanTable(), $data);
+        $this->mapper->create($this->cfg->getLightBanTable(), $data);
+        $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
+        $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
+
+        $elapsedTime = 2;
+
+        $this->cfg->setLightBanSeconds($elapsedTime);
+        $this->cfg->setExtendedBanSeconds($elapsedTime);
+
+        sleep(2); // value below $elapsedTime should fail this test
+
+        $this->firewall->flushExpired();
+
+        // test if IPs are flushed from LightBanTable
+        $rows = $this->mapper->findAll($this->cfg->getLightBanTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if IPs are flushed from ExtendedBanTable
+        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $this->assertCount(0, $rows);
+    }
+
+    public function testFlushLightBanned()
+    {
+        // seed
+        $this->mapper->create($this->cfg->getLightBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getLightBanTable(), $this->data);
+
+        $this->firewall->flushLightBanned();
+
+        // test if IPs are flushed from LightBanTable
+        $rows = $this->mapper->findAll($this->cfg->getLightBanTable(), $this->where);
+        $this->assertCount(0, $rows);
     }
 }
