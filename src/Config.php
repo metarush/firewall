@@ -5,28 +5,35 @@ namespace MetaRush\Firewall;
 class Config
 {
     /**
-     * Name of the light ban database table
+     * Light ban table
      *
      * @var string
      */
     private $lightBanTable;
 
     /**
-     * Name of the whitelist database table
+     * Extended ban table
+     *
+     * @var string
+     */
+    private $extendedBanTable;
+
+    /**
+     * Whitelist table
      *
      * @var string
      */
     private $whitelistTable;
 
     /**
-     * Name of the database table that will store fail count
+     * Fail count table
      *
      * @var string
      */
     private $failCountTable;
 
     /**
-     * Name of the database table that will store block count
+     * Block count table
      *
      * @var string
      */
@@ -37,14 +44,14 @@ class Config
      *
      * @var int
      */
-    private $failCount = 5;
+    private $maxFailCount = 5;
 
     /**
      * Number of blocks an IP address must get before getting an extended ban
      *
      * @var int
      */
-    private $blockCount = 5;
+    private $maxBlockCount = 5;
 
     /**
      * Number of seconds to ban IP address after reaching fail count
@@ -84,26 +91,26 @@ class Config
         return $this;
     }
 
-    public function getBlockCount(): int
+    public function getMaxBlockCount(): int
     {
-        return $this->blockCount;
+        return $this->maxBlockCount;
     }
 
-    public function setBlockCount(int $blockCount)
+    public function setMaxBlockCount(int $maxBlockCount)
     {
-        $this->blockCount = $blockCount;
+        $this->maxBlockCount = $maxBlockCount;
 
         return $this;
     }
 
-    public function getFailCount(): int
+    public function getMaxFailCount(): int
     {
-        return $this->failCount;
+        return $this->maxFailCount;
     }
 
-    public function setFailCount(int $failCount)
+    public function setMaxFailCount(int $maxFailCount)
     {
-        $this->failCount = $failCount;
+        $this->maxFailCount = $maxFailCount;
 
         return $this;
     }
@@ -128,6 +135,18 @@ class Config
     public function setFailCountTable(string $failCountTable)
     {
         $this->failCountTable = $failCountTable;
+
+        return $this;
+    }
+
+    public function getExtendedBanTable(): string
+    {
+        return $this->extendedBanTable;
+    }
+
+    public function setExtendedBanTable(string $extendedBanTable)
+    {
+        $this->extendedBanTable = $extendedBanTable;
 
         return $this;
     }

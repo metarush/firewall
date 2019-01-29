@@ -21,8 +21,22 @@ class Firewall
      */
     public function lightBan(string $ip): void
     {
-        if (!$this->whitelisted($ip))
-            $this->repo->addIp($ip, $this->cfg->getLightBanTable());
+        if ($this->whitelisted($ip))
+            return;
+
+        $this->repo->addIp($ip, $this->cfg->getLightBanTable());
+        $this->repo->addIp($ip, $this->cfg->getBlockCountTable(), true);
+        $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+    }
+
+    public function extendedBan(string $ip): void
+    {
+        if ($this->whitelisted($ip))
+            return;
+
+        $this->repo->addIp($ip, $this->cfg->getExtendedBanTable());
+        $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+        $this->repo->deleteIp($ip, $this->cfg->getLightBanTable());
     }
 
     /**
@@ -59,23 +73,29 @@ class Firewall
     }
 
     /**
-     * Block $ip if it reaches the value of Config->getFailCount()
+     * Light ban $ip if it reaches the value of Config->getMaxFailCount()
+     * Extended ban $ip if it reaches the value of Config->getMaxBlockCount();
      *
      * @param string $ip
      * @return void
      */
     public function preventBruteForce(string $ip): void
     {
+        if ($this->whitelisted($ip))
+            return;
+
         $this->repo->addIp($ip, $this->cfg->getFailCountTable(), true);
 
-        $count = $this->repo->countIp($ip, $this->cfg->getFailCountTable());
+        $failCount = $this->repo->countIp($ip, $this->cfg->getFailCountTable());
+        if ($failCount < $this->cfg->getMaxFailCount())
+            return;
 
-        if ($count >= $this->cfg->getFailCount()) {
+        $this->lightBan($ip);
 
-            $this->lightBan($ip);
-            $this->repo->addIp($ip, $this->cfg->getBlockCountTable(), true);
-            $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+        $blockCount = $this->repo->countIp($ip, $this->cfg->getBlockCountTable());
+        if ($blockCount < $this->cfg->getMaxBlockCount())
+            return;
 
-        }
+        $this->extendedBan($ip);
     }
 }

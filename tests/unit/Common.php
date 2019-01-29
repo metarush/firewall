@@ -57,6 +57,7 @@ class Common extends TestCase
 
         $this->cfg = (new Firewall\Config)
             ->setLightBanTable('lightBan')
+            ->setExtendedBanTable('extendedBan')
             ->setWhitelistTable('whitelist')
             ->setFailCountTable('failCount')
             ->setBlockCountTable('blockCount');
@@ -77,6 +78,12 @@ class Common extends TestCase
 
             $this->pdo->query('
                 CREATE TABLE `' . $this->cfg->getLightBanTable() . '` (
+                `ip`        TEXT,
+                `dateTime`  TEXT
+            )');
+
+            $this->pdo->query('
+                CREATE TABLE `' . $this->cfg->getExtendedBanTable() . '` (
                 `ip`        TEXT,
                 `dateTime`  TEXT
             )');
