@@ -64,7 +64,9 @@ class Common extends TestCase
         // setup test db
         // ----------------------------------------------
 
-        $this->dbFile = __DIR__ . '/test.db';
+        $this->dbFile = __DIR__ . '/' . get_class($this) . '.db';
+        // we use get_class($this) to use the child class' name as db name
+        // because of IO issues with SQLite
 
         $dsn = 'sqlite:' . $this->dbFile;
 
