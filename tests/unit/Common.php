@@ -1,8 +1,6 @@
 <?php
 
-error_reporting(E_ALL);
-
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use MetaRush\Firewall;
 use MetaRush\DataMapper;
 
@@ -111,10 +109,10 @@ class Common extends TestCase
         // init main classes
         // ----------------------------------------------
 
-        $factory = (new DataMapper\Factory())
+        $builder = (new DataMapper\Builder)
             ->setDsn($dsn);
 
-        $this->mapper = $factory->build();
+        $this->mapper = $builder->build();
 
         $this->repo = new Firewall\Repo($this->cfg, $this->mapper);
 
