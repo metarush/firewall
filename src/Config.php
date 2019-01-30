@@ -2,42 +2,44 @@
 
 namespace MetaRush\Firewall;
 
-class Config
+use MetaRush\DataMapper;
+
+class Config extends DataMapper\Config
 {
     /**
      * Light ban table
      *
      * @var string
      */
-    private $lightBanTable;
+    private $lightBanTable = 'lightBan';
 
     /**
      * Extended ban table
      *
      * @var string
      */
-    private $extendedBanTable;
+    private $extendedBanTable = 'extendedBan';
 
     /**
      * Whitelist table
      *
      * @var string
      */
-    private $whitelistTable;
+    private $whitelistTable = 'whitelist';
 
     /**
      * Fail count table
      *
      * @var string
      */
-    private $failCountTable;
+    private $failCountTable = 'failCount';
 
     /**
      * Block count table
      *
      * @var string
      */
-    private $blockCountTable;
+    private $blockCountTable = 'blockCount';
 
     /**
      * Number of failed attempts before blocking an IP address (light ban)
