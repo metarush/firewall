@@ -14,17 +14,17 @@ class Firewall
     }
 
     /**
-     * Light-ban $ip if it's not whitelisted
+     * Temp-ban $ip if it's not whitelisted
      *
      * @param string $ip
      * @return void
      */
-    public function lightBan(string $ip): void
+    public function tempBan(string $ip): void
     {
         if ($this->whitelisted($ip))
             return;
 
-        $this->repo->addIp($ip, $this->cfg->getLightBanTable());
+        $this->repo->addIp($ip, $this->cfg->getTempBanTable());
         $this->repo->addIp($ip, $this->cfg->getBlockCountTable(), true);
         $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
     }
@@ -42,18 +42,18 @@ class Firewall
 
         $this->repo->addIp($ip, $this->cfg->getExtendedBanTable());
         $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
-        $this->repo->deleteIp($ip, $this->cfg->getLightBanTable());
+        $this->repo->deleteIp($ip, $this->cfg->getTempBanTable());
     }
 
     /**
-     * Returns true if $ip is banned (light/extended), false otherwise
+     * Returns true if $ip is banned (temp/extended), false otherwise
      *
      * @param string $ip
      * @return bool
      */
     public function banned(string $ip): bool
     {
-        if ($this->repo->ipLogged($ip, $this->cfg->getLightBanTable()))
+        if ($this->repo->ipLogged($ip, $this->cfg->getTempBanTable()))
             return true;
 
         if ($this->repo->ipLogged($ip, $this->cfg->getExtendedBanTable()))
@@ -85,7 +85,7 @@ class Firewall
     }
 
     /**
-     * Light/extended ban $ip if it reaches the value of getMaxFailCount() and
+     * Temp/extended ban $ip if it reaches the value of getMaxFailCount() and
      * getMaxBlockCount() respectively
      *
      * @param string $ip
@@ -102,7 +102,7 @@ class Firewall
         if ($failCount < $this->cfg->getMaxFailCount())
             return;
 
-        $this->lightBan($ip);
+        $this->tempBan($ip);
 
         $blockCount = $this->repo->countIp($ip, $this->cfg->getBlockCountTable());
         if ($blockCount < $this->cfg->getMaxBlockCount())
@@ -112,7 +112,7 @@ class Firewall
     }
 
     /**
-     * Release IPs that are banned (light/extended) for more than the set limit
+     * Release IPs that are banned (temp/extended) for more than the set limit
      *
      * Run this on top of your script or via cron every x seconds
      *
@@ -120,18 +120,18 @@ class Firewall
      */
     public function flushExpired(): void
     {
-        $this->repo->flushIps($this->cfg->getLightBanTable(), $this->cfg->getLightBanSeconds());
+        $this->repo->flushIps($this->cfg->getTempBanTable(), $this->cfg->getTempBanSeconds());
         $this->repo->flushIps($this->cfg->getExtendedBanTable(), $this->cfg->getExtendedBanSeconds());
     }
 
     /**
-     * Release IPs that are light-banned
+     * Release IPs that are temp-banned
      *
      * @return void
      */
-    public function flushLightBanned(): void
+    public function flushTempBanned(): void
     {
-        $this->repo->emptyTable($this->cfg->getLightBanTable());
+        $this->repo->emptyTable($this->cfg->getTempBanTable());
     }
 
     /**

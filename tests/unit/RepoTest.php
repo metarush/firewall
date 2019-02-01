@@ -7,7 +7,7 @@ class RepoTest extends Common
     private $testIp = '1.2.3.4';
     private $where = ['ip' => '1.2.3.4'];
     private $data = ['ip' => '1.2.3.4'];
-    private $testTable = 'lightBan';
+    private $testTable = 'tempBan';
 
     /**
      * test addIp

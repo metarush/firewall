@@ -9,14 +9,14 @@ class FirewallTest extends Common
     private $data = ['ip' => '1.2.3.4'];
 
     /**
-     * test lightBan
+     * test tempBan
      */
-    public function testLightBan()
+    public function testTempBan()
     {
-        $this->firewall->lightBan($this->testIp);
+        $this->firewall->tempBan($this->testIp);
 
-        // test if ip is light banned
-        $row = $this->mapper->findOne($this->cfg->getLightBanTable(), $this->where);
+        // test if ip is temp banned
+        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertIsArray($row);
 
         // test if ip is block counted
@@ -28,15 +28,15 @@ class FirewallTest extends Common
         $this->assertNull($row);
     }
 
-    public function testLightBanWhitelisted()
+    public function testTempBanWhitelisted()
     {
         // seed
         $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
 
-        $this->firewall->lightBan($this->testIp);
+        $this->firewall->tempBan($this->testIp);
 
         // test if ip was not banned
-        $row = $this->mapper->findOne($this->cfg->getLightBanTable(), $this->where);
+        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertNull($row);
     }
 
@@ -55,18 +55,18 @@ class FirewallTest extends Common
         $row = $this->mapper->findOne($this->cfg->getFailCountTable(), $this->where);
         $this->assertNull($row);
 
-        // test if ip is no longer in lightBanTable
-        $row = $this->mapper->findOne($this->cfg->getLightBanTable(), $this->where);
+        // test if ip is no longer in tempBanTable
+        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertNull($row);
     }
 
     /**
-     * test banned (light ban)
+     * test banned (temp ban)
      */
-    public function testBannedLight()
+    public function testBannedTemp()
     {
         // seed
-        $this->mapper->create($this->cfg->getLightBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
 
         $banned = $this->firewall->banned($this->testIp);
 
@@ -125,9 +125,9 @@ class FirewallTest extends Common
 
     /**
      * Simulate 5 failed attempts so that the $ip will be transferred from
-     * FailCountTable to LightBanTable.
+     * FailCountTable to TempBanTable.
      */
-    public function testPreventBruteForceLightBan()
+    public function testPreventBruteForceTempBan()
     {
         for ($i = 0; $i < 5; $i++)
             $this->firewall->preventBruteForce($this->testIp);
@@ -136,14 +136,14 @@ class FirewallTest extends Common
         $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
-        // test if ip was transferred to lightBanTable
-        $row = $this->mapper->findOne($this->cfg->getLightBanTable(), $this->where);
+        // test if ip was transferred to tempBanTable
+        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertIsArray($row);
     }
 
     /**
      * Simulate 25 failed attempts so that the $ip will be transferred from
-     * LightBanTable to ExtendedBanTable
+     * TempBanTable to ExtendedBanTable
      */
     public function testPreventBruteForceExtendedBan()
     {
@@ -154,8 +154,8 @@ class FirewallTest extends Common
         $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
-        // test if ip is no longer in lightBanTable
-        $row = $this->mapper->findOne($this->cfg->getLightBanTable(), $this->where);
+        // test if ip is no longer in tempBanTable
+        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertNull($row);
 
         // test if ip is now on extendedBanTable
@@ -173,22 +173,22 @@ class FirewallTest extends Common
             'ip'       => '1.2.3.4',
             'dateTime' => date('Y-m-d H:i:s')
         ];
-        $this->mapper->create($this->cfg->getLightBanTable(), $data);
-        $this->mapper->create($this->cfg->getLightBanTable(), $data);
+        $this->mapper->create($this->cfg->getTempBanTable(), $data);
+        $this->mapper->create($this->cfg->getTempBanTable(), $data);
         $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
         $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
 
         $elapsedTime = 2;
 
-        $this->cfg->setLightBanSeconds($elapsedTime);
+        $this->cfg->setTempBanSeconds($elapsedTime);
         $this->cfg->setExtendedBanSeconds($elapsedTime);
 
         sleep(2); // value below $elapsedTime should fail this test
 
         $this->firewall->flushExpired();
 
-        // test if IPs are flushed from LightBanTable
-        $rows = $this->mapper->findAll($this->cfg->getLightBanTable(), $this->where);
+        // test if IPs are flushed from TempBanTable
+        $rows = $this->mapper->findAll($this->cfg->getTempBanTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from ExtendedBanTable
@@ -196,16 +196,16 @@ class FirewallTest extends Common
         $this->assertCount(0, $rows);
     }
 
-    public function testFlushLightBanned()
+    public function testFlushTempBanned()
     {
         // seed
-        $this->mapper->create($this->cfg->getLightBanTable(), $this->data);
-        $this->mapper->create($this->cfg->getLightBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
 
-        $this->firewall->flushLightBanned();
+        $this->firewall->flushTempBanned();
 
-        // test if IPs are flushed from LightBanTable
-        $rows = $this->mapper->findAll($this->cfg->getLightBanTable(), $this->where);
+        // test if IPs are flushed from TempBanTable
+        $rows = $this->mapper->findAll($this->cfg->getTempBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
 

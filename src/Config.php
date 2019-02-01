@@ -7,11 +7,11 @@ use MetaRush\DataMapper;
 class Config extends DataMapper\Config
 {
     /**
-     * Light ban table
+     * Temp ban table
      *
      * @var string
      */
-    private $lightBanTable = 'lightBan';
+    private $tempBanTable = 'tempBan';
 
     /**
      * Extended ban table
@@ -42,7 +42,7 @@ class Config extends DataMapper\Config
     private $blockCountTable = 'blockCount';
 
     /**
-     * Number of failed attempts before blocking an IP address (light ban)
+     * Number of failed attempts before blocking an IP address (temp ban)
      *
      * @var int
      */
@@ -60,7 +60,7 @@ class Config extends DataMapper\Config
      *
      * @var int
      */
-    private $lightBanSeconds = 900;
+    private $tempBanSeconds = 900;
 
     /**
      * Number of seconds to ban IP address after reaching block count
@@ -81,14 +81,14 @@ class Config extends DataMapper\Config
         return $this;
     }
 
-    public function getLightBanSeconds(): int
+    public function getTempBanSeconds(): int
     {
-        return $this->lightBanSeconds;
+        return $this->tempBanSeconds;
     }
 
-    public function setLightBanSeconds(int $lightBanSeconds)
+    public function setTempBanSeconds(int $tempBanSeconds)
     {
-        $this->lightBanSeconds = $lightBanSeconds;
+        $this->tempBanSeconds = $tempBanSeconds;
 
         return $this;
     }
@@ -153,14 +153,14 @@ class Config extends DataMapper\Config
         return $this;
     }
 
-    public function getLightBanTable(): string
+    public function getTempBanTable(): string
     {
-        return $this->lightBanTable;
+        return $this->tempBanTable;
     }
 
-    public function setLightBanTable(string $lightBanTable)
+    public function setTempBanTable(string $tempBanTable)
     {
-        $this->lightBanTable = $lightBanTable;
+        $this->tempBanTable = $tempBanTable;
 
         return $this;
     }
