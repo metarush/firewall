@@ -112,7 +112,8 @@ class Firewall
     }
 
     /**
-     * Release IPs that are banned (temp/extended) for more than the set limit
+     * Release all IPs that are whitelisted and banned (temp/extended) for more
+     * than the set limit
      *
      * Run this on top of your script or via cron every x seconds
      *
@@ -122,10 +123,11 @@ class Firewall
     {
         $this->repo->flushIps($this->cfg->getTempBanTable(), $this->cfg->getTempBanSeconds());
         $this->repo->flushIps($this->cfg->getExtendedBanTable(), $this->cfg->getExtendedBanSeconds());
+        $this->repo->flushIps($this->cfg->getWhitelistTable(), $this->cfg->getWhitelistSeconds());
     }
 
     /**
-     * Release IPs that are temp-banned
+     * Release IPs that are temp-banned regardless of expiration time
      *
      * @return void
      */
@@ -135,7 +137,7 @@ class Firewall
     }
 
     /**
-     * Release IPs that are extended-banned
+     * Release IPs that are extended-banned regardless of expiration time
      *
      * @return void
      */
@@ -145,7 +147,7 @@ class Firewall
     }
 
     /**
-     * Release IPs that are whitelisted
+     * Release IPs that are whitelisted regardless of expiration time
      *
      * @return void
      */

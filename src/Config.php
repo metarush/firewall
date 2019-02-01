@@ -69,6 +69,25 @@ class Config extends DataMapper\Config
      */
     private $extendedBanSeconds = 86400;
 
+    /**
+     * Nuber of seconds an IP stays whitelisted
+     *
+     * @var int
+     */
+    private $whitelistSeconds = 2592000;
+
+    public function getWhitelistSeconds(): int
+    {
+        return $this->whitelistSeconds;
+    }
+
+    public function setWhitelistSeconds(int $whitelistSeconds)
+    {
+        $this->whitelistSeconds = $whitelistSeconds;
+
+        return $this;
+    }
+
     public function getExtendedBanSeconds(): int
     {
         return $this->extendedBanSeconds;

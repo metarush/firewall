@@ -177,11 +177,14 @@ class FirewallTest extends Common
         $this->mapper->create($this->cfg->getTempBanTable(), $data);
         $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
         $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
+        $this->mapper->create($this->cfg->getWhitelistTable(), $data);
+        $this->mapper->create($this->cfg->getWhitelistTable(), $data);
 
         $elapsedTime = 2;
 
         $this->cfg->setTempBanSeconds($elapsedTime);
         $this->cfg->setExtendedBanSeconds($elapsedTime);
+        $this->cfg->setWhitelistSeconds($elapsedTime);
 
         sleep(2); // value below $elapsedTime should fail this test
 
@@ -194,8 +197,15 @@ class FirewallTest extends Common
         // test if IPs are flushed from ExtendedBanTable
         $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
+
+        // test if IPs are flushed from WhitelistTable
+        $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $this->assertCount(0, $rows);
     }
 
+    /**
+     * test flushTempBanned
+     */
     public function testFlushTempBanned()
     {
         // seed
@@ -209,6 +219,9 @@ class FirewallTest extends Common
         $this->assertCount(0, $rows);
     }
 
+    /**
+     * test flushExtendedBanned
+     */
     public function testFlushExtendedBanned()
     {
         // seed
@@ -222,6 +235,9 @@ class FirewallTest extends Common
         $this->assertCount(0, $rows);
     }
 
+    /**
+     * test flushWhitelisted
+     */
     public function testFlushWhitelisted()
     {
         // seed
