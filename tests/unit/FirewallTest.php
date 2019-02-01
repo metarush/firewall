@@ -221,4 +221,16 @@ class FirewallTest extends Common
         $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
+
+    public function testFlushWhitelisted()
+    {
+        // seed
+        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+
+        $this->firewall->flushWhitelisted();
+
+        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $this->assertCount(0, $rows);
+    }
 }

@@ -143,4 +143,14 @@ class Firewall
     {
         $this->repo->emptyTable($this->cfg->getExtendedBanTable());
     }
+
+    /**
+     * Release IPs that are whitelisted
+     *
+     * @return void
+     */
+    public function flushWhitelisted(): void
+    {
+        $this->repo->emptyTable($this->cfg->getWhitelistTable());
+    }
 }
