@@ -76,10 +76,18 @@ database is MySQL.
     }
 
     if ($_POST['password'] != 'foo') {
+
         $fw->preventBruteForce($_SERVER['REMOTE_ADDR']);
+
         // show your error page
+        exit('Invalid login');
+
     } else {
-        // proceed to login
+
+        // release IP from block counters
+        $fw->flushIp($_SERVER['REMOTE_ADDR']);
+
+        // proceed to login...
     }
 
 ## Custom settings
