@@ -6,3 +6,4 @@ vendor/
 public/
 resources/docker/
 nbproject/
+.phpunit.result.cache

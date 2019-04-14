@@ -155,4 +155,22 @@ class Firewall
     {
         $this->repo->emptyTable($this->cfg->getWhitelistTable());
     }
+
+    /**
+     * Flush IP in all "block" tables and optionally flush in whitelist table
+     *
+     * @param string $ip
+     * @param bool $alsoWhitelistTable
+     * @return void
+     */
+    public function flushIp(string $ip, bool $alsoWhitelistTable = false): void
+    {
+        $this->repo->deleteIp($ip, $this->cfg->getBlockCountTable());
+        $this->repo->deleteIp($ip, $this->cfg->getExtendedBanTable());
+        $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+        $this->repo->deleteIp($ip, $this->cfg->getTempBanTable());
+
+        if ($alsoWhitelistTable)
+            $this->repo->deleteIp($ip, $this->cfg->getWhitelistTable());
+    }
 }

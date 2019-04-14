@@ -249,4 +249,45 @@ class FirewallTest extends Common
         $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
+
+    /**
+     * test flushIp
+     */
+    public function testFlushIp()
+    {
+        // seed
+        $this->mapper->create($this->cfg->getBlockCountTable(), $this->data);
+        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getFailCountTable(), $this->data);
+        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
+        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+
+        $this->firewall->flushIp($this->testIp);
+
+        // test if IPs are flushed from BlockCountTable
+        $rows = $this->mapper->findAll($this->cfg->getBlockCountTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if IPs are flushed from ExtendedBanTable
+        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if IPs are flushed from FailCountTable
+        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if IPs are flushed from TempBanTable
+        $rows = $this->mapper->findAll($this->cfg->getTempBanTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if IPs is NOT flushed from WhitelistTable
+        $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $this->assertCount(1, $rows);
+
+        $this->firewall->flushIp($this->testIp, true);
+
+        // test if IPs are flushed from WhitelistTable
+        $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $this->assertCount(0, $rows);
+    }
 }

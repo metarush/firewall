@@ -202,3 +202,9 @@ Release IPs that are banned for an extended period regardless of expiration time
 `flushWhitelisted(): void`
 
 Release IPs that are whitelisted regardless of expiration time
+
+### flushIp
+
+Release IP in all "block" tables and optionally release in whitelist table
+
+`flushIp(string $ip, bool $alsoWhitelistTable = false): void`
