@@ -2,7 +2,9 @@
 
 ## 1.1.0
 
-- Add flushIp() method.
+- Add flushIp() service method.
+- Add setFailCountSeconds() config method.
+- Auto-expire entries in failCount table.
 
 ## 1.0.0
 

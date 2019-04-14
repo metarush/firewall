@@ -14,7 +14,7 @@ period of 24 hours.
 
 ### Summary
 
- - 5 fails = 15-minute temporary lock
+ - 5 fails within a 15-minute period = 15-minute temporary lock
  - 5 temporary locks = 24-hour lock
 
 Note: These settings can be changed
@@ -111,6 +111,10 @@ If you named your tables differently, let the system know via:
 ### Extended ban seconds
 
     ->setExtendedBanSeconds(86400) // 1 day
+
+### Period wherein failed attempts are counted as candidate for temporary ban
+
+    ->setFailCountSeconds(900) // 15 minutes
 
 ### Whitelist seconds
 

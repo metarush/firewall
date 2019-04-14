@@ -179,12 +179,15 @@ class FirewallTest extends Common
         $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
         $this->mapper->create($this->cfg->getWhitelistTable(), $data);
         $this->mapper->create($this->cfg->getWhitelistTable(), $data);
+        $this->mapper->create($this->cfg->getFailCountTable(), $data);
+        $this->mapper->create($this->cfg->getFailCountTable(), $data);
 
         $elapsedTime = 2;
 
         $this->cfg->setTempBanSeconds($elapsedTime);
         $this->cfg->setExtendedBanSeconds($elapsedTime);
         $this->cfg->setWhitelistSeconds($elapsedTime);
+        $this->cfg->setFailCountSeconds($elapsedTime);
 
         sleep(2); // value below $elapsedTime should fail this test
 
@@ -200,6 +203,10 @@ class FirewallTest extends Common
 
         // test if IPs are flushed from WhitelistTable
         $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if IPs are flushed from FailCountTable
+        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
     }
 
