@@ -125,6 +125,7 @@ class Firewall
         $this->repo->flushIps($this->cfg->getExtendedBanTable(), $this->cfg->getExtendedBanSeconds());
         $this->repo->flushIps($this->cfg->getWhitelistTable(), $this->cfg->getWhitelistSeconds());
         $this->repo->flushIps($this->cfg->getFailCountTable(), $this->cfg->getFailCountSeconds());
+        $this->repo->flushIps($this->cfg->getBlockCountTable(), $this->cfg->getBlockCountSeconds());
     }
 
     /**

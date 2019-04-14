@@ -116,6 +116,10 @@ If you named your tables differently, let the system know via:
 
     ->setFailCountSeconds(900) // 15 minutes
 
+### Period wherein temporary locks are counted as candidate for extended ban
+
+    ->setBlockCountSeconds(86400) // 1 day
+
 ### Whitelist seconds
 
     ->setWhitelistSeconds(2592000) // 30 days

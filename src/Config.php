@@ -83,6 +83,24 @@ class Config extends DataMapper\Config
      */
     private $failCountSeconds = 900;
 
+    /**
+     * Number of seconds an IP stays in the blockCount table
+     *
+     * @var int
+     */
+    private $blockCountSeconds = 86400;
+
+    public function getBlockCountSeconds(): int
+    {
+        return $this->blockCountSeconds;
+    }
+
+    public function setBlockCountSeconds(int $blockCountSeconds)
+    {
+        $this->blockCountSeconds = $blockCountSeconds;
+        return $this;
+    }
+
     public function getFailCountSeconds(): int
     {
         return $this->failCountSeconds;

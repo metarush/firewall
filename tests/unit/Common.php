@@ -47,7 +47,7 @@ class Common extends TestCase
      */
     protected $firewall;
 
-    public function setUp()
+    public function setUp(): void
     {
         // ----------------------------------------------
         // setup Config object
@@ -64,7 +64,7 @@ class Common extends TestCase
         // setup test db
         // ----------------------------------------------
 
-        $this->dbFile = __DIR__ . '/' . get_class($this).'-'.uniqid() . '.db';
+        $this->dbFile = __DIR__ . '/' . get_class($this) . '-' . uniqid() . '.db';
         // we use get_class($this) to use the child class' name as db name
         // because of IO issues with SQLite
 
@@ -121,7 +121,7 @@ class Common extends TestCase
         $this->firewall = new Firewall\Firewall($this->cfg, $this->repo);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // close the DB connections so unlink will work
         unset($this->mapper);
