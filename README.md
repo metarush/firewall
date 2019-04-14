@@ -14,7 +14,7 @@ period of 24 hours.
 
 ### Summary
 
- - 5 fails = 15-minute temporary lock
+ - 5 fails within a 15-minute period = 15-minute temporary lock
  - 5 temporary locks = 24-hour lock
 
 Note: These settings can be changed
@@ -112,6 +112,14 @@ If you named your tables differently, let the system know via:
 
     ->setExtendedBanSeconds(86400) // 1 day
 
+### Period wherein failed attempts are counted as candidate for temporary ban
+
+    ->setFailCountSeconds(900) // 15 minutes
+
+### Period wherein temporary locks are counted as candidate for extended ban
+
+    ->setBlockCountSeconds(86400) // 1 day
+
 ### Whitelist seconds
 
     ->setWhitelistSeconds(2592000) // 30 days
@@ -202,3 +210,9 @@ Release IPs that are banned for an extended period regardless of expiration time
 `flushWhitelisted(): void`
 
 Release IPs that are whitelisted regardless of expiration time
+
+### flushIp
+
+Release IP in all "block" tables and optionally release in whitelist table
+
+`flushIp(string $ip, bool $alsoWhitelistTable = false): void`

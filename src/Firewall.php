@@ -124,6 +124,8 @@ class Firewall
         $this->repo->flushIps($this->cfg->getTempBanTable(), $this->cfg->getTempBanSeconds());
         $this->repo->flushIps($this->cfg->getExtendedBanTable(), $this->cfg->getExtendedBanSeconds());
         $this->repo->flushIps($this->cfg->getWhitelistTable(), $this->cfg->getWhitelistSeconds());
+        $this->repo->flushIps($this->cfg->getFailCountTable(), $this->cfg->getFailCountSeconds());
+        $this->repo->flushIps($this->cfg->getBlockCountTable(), $this->cfg->getBlockCountSeconds());
     }
 
     /**
@@ -154,5 +156,23 @@ class Firewall
     public function flushWhitelisted(): void
     {
         $this->repo->emptyTable($this->cfg->getWhitelistTable());
+    }
+
+    /**
+     * Flush IP in all "block" tables and optionally flush in whitelist table
+     *
+     * @param string $ip
+     * @param bool $alsoWhitelistTable
+     * @return void
+     */
+    public function flushIp(string $ip, bool $alsoWhitelistTable = false): void
+    {
+        $this->repo->deleteIp($ip, $this->cfg->getBlockCountTable());
+        $this->repo->deleteIp($ip, $this->cfg->getExtendedBanTable());
+        $this->repo->deleteIp($ip, $this->cfg->getFailCountTable());
+        $this->repo->deleteIp($ip, $this->cfg->getTempBanTable());
+
+        if ($alsoWhitelistTable)
+            $this->repo->deleteIp($ip, $this->cfg->getWhitelistTable());
     }
 }

@@ -76,6 +76,42 @@ class Config extends DataMapper\Config
      */
     private $whitelistSeconds = 2592000;
 
+    /**
+     * Number of seconds an IP stays in the failCount table
+     *
+     * @var int
+     */
+    private $failCountSeconds = 900;
+
+    /**
+     * Number of seconds an IP stays in the blockCount table
+     *
+     * @var int
+     */
+    private $blockCountSeconds = 86400;
+
+    public function getBlockCountSeconds(): int
+    {
+        return $this->blockCountSeconds;
+    }
+
+    public function setBlockCountSeconds(int $blockCountSeconds)
+    {
+        $this->blockCountSeconds = $blockCountSeconds;
+        return $this;
+    }
+
+    public function getFailCountSeconds(): int
+    {
+        return $this->failCountSeconds;
+    }
+
+    public function setFailCountSeconds(int $failCountSeconds)
+    {
+        $this->failCountSeconds = $failCountSeconds;
+        return $this;
+    }
+
     public function getWhitelistSeconds(): int
     {
         return $this->whitelistSeconds;
@@ -84,7 +120,6 @@ class Config extends DataMapper\Config
     public function setWhitelistSeconds(int $whitelistSeconds)
     {
         $this->whitelistSeconds = $whitelistSeconds;
-
         return $this;
     }
 
@@ -96,7 +131,6 @@ class Config extends DataMapper\Config
     public function setExtendedBanSeconds(int $extendedBanSeconds)
     {
         $this->extendedBanSeconds = $extendedBanSeconds;
-
         return $this;
     }
 
@@ -108,7 +142,6 @@ class Config extends DataMapper\Config
     public function setTempBanSeconds(int $tempBanSeconds)
     {
         $this->tempBanSeconds = $tempBanSeconds;
-
         return $this;
     }
 
@@ -120,7 +153,6 @@ class Config extends DataMapper\Config
     public function setMaxBlockCount(int $maxBlockCount)
     {
         $this->maxBlockCount = $maxBlockCount;
-
         return $this;
     }
 
@@ -132,7 +164,6 @@ class Config extends DataMapper\Config
     public function setMaxFailCount(int $maxFailCount)
     {
         $this->maxFailCount = $maxFailCount;
-
         return $this;
     }
 
@@ -144,7 +175,6 @@ class Config extends DataMapper\Config
     public function setBlockCountTable(string $blockCountTable)
     {
         $this->blockCountTable = $blockCountTable;
-
         return $this;
     }
 
@@ -156,7 +186,6 @@ class Config extends DataMapper\Config
     public function setFailCountTable(string $failCountTable)
     {
         $this->failCountTable = $failCountTable;
-
         return $this;
     }
 
@@ -168,7 +197,6 @@ class Config extends DataMapper\Config
     public function setExtendedBanTable(string $extendedBanTable)
     {
         $this->extendedBanTable = $extendedBanTable;
-
         return $this;
     }
 
@@ -180,7 +208,6 @@ class Config extends DataMapper\Config
     public function setTempBanTable(string $tempBanTable)
     {
         $this->tempBanTable = $tempBanTable;
-
         return $this;
     }
 
@@ -192,7 +219,6 @@ class Config extends DataMapper\Config
     public function setWhitelistTable(string $whitelistTable)
     {
         $this->whitelistTable = $whitelistTable;
-
         return $this;
     }
 }
