@@ -16,27 +16,27 @@ class FirewallTest extends Common
         $this->firewall->tempBan($this->testIp);
 
         // test if ip is temp banned
-        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertIsArray($row);
 
         // test if ip is block counted
-        $row = $this->mapper->findOne($this->cfg->getBlockCountTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getBlockCountTable(), $this->where);
         $this->assertIsArray($row);
 
         // test if ip is no longer in failCountTable
-        $row = $this->mapper->findOne($this->cfg->getFailCountTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getFailCountTable(), $this->where);
         $this->assertNull($row);
     }
 
     public function testTempBanWhitelisted()
     {
         // seed
-        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
 
         $this->firewall->tempBan($this->testIp);
 
         // test if ip was not banned
-        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertNull($row);
     }
 
@@ -48,15 +48,27 @@ class FirewallTest extends Common
         $this->firewall->extendedBan($this->testIp);
 
         // test if ip is extended banned
-        $row = $this->mapper->findOne($this->cfg->getExtendedBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertIsArray($row);
 
         // test if ip is no longer in failCountTable
-        $row = $this->mapper->findOne($this->cfg->getFailCountTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getFailCountTable(), $this->where);
         $this->assertNull($row);
 
         // test if ip is no longer in tempBanTable
-        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), $this->where);
+        $this->assertNull($row);
+    }
+
+    public function testExtendedBanWhitelisted()
+    {
+        // seed
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
+
+        $this->firewall->extendedBan($this->testIp);
+
+        // test if ip was not banned
+        $row = $this->dal->findOne($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertNull($row);
     }
 
@@ -66,7 +78,7 @@ class FirewallTest extends Common
     public function testBannedTemp()
     {
         // seed
-        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
+        $this->dal->create($this->cfg->getTempBanTable(), $this->data);
 
         $banned = $this->firewall->banned($this->testIp);
 
@@ -79,7 +91,7 @@ class FirewallTest extends Common
     public function testBannedExtended()
     {
         // seed
-        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
+        $this->dal->create($this->cfg->getExtendedBanTable(), $this->data);
 
         $banned = $this->firewall->banned($this->testIp);
 
@@ -93,7 +105,7 @@ class FirewallTest extends Common
     {
         $this->firewall->whitelist($this->testIp);
 
-        $row = $this->mapper->findOne($this->cfg->getWhitelistTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getWhitelistTable(), $this->where);
         $this->assertIsArray($row);
     }
 
@@ -103,7 +115,7 @@ class FirewallTest extends Common
     public function testWhitelisted()
     {
         // seed
-        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
 
         $whitelisted = $this->firewall->whitelisted($this->testIp);
 
@@ -119,7 +131,7 @@ class FirewallTest extends Common
             $this->firewall->preventBruteForce($this->testIp);
 
         // test if there are 3 rows in FailCountTable
-        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(3, $rows);
     }
 
@@ -133,11 +145,11 @@ class FirewallTest extends Common
             $this->firewall->preventBruteForce($this->testIp);
 
         // test if FailCountTable is empty
-        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if ip was transferred to tempBanTable
-        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertIsArray($row);
     }
 
@@ -151,16 +163,33 @@ class FirewallTest extends Common
             $this->firewall->preventBruteForce($this->testIp);
 
         // test if FailCountTable is empty
-        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if ip is no longer in tempBanTable
-        $row = $this->mapper->findOne($this->cfg->getTempBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), $this->where);
         $this->assertNull($row);
 
         // test if ip is now on extendedBanTable
-        $row = $this->mapper->findOne($this->cfg->getExtendedBanTable(), $this->where);
+        $row = $this->dal->findOne($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertIsArray($row);
+    }
+
+    public function testPreventBruteForceWhitelisted()
+    {
+        // seed
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
+
+        for ($i = 0; $i < 5; $i++)
+            $this->firewall->preventBruteForce($this->testIp);
+
+        // test if FailCountTable is empty
+        $rows = $this->dal->findAll($this->cfg->getFailCountTable(), $this->where);
+        $this->assertCount(0, $rows);
+
+        // test if ip is not in TempBanTable
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), $this->where);
+        $this->assertNull($row);
     }
 
     /**
@@ -173,16 +202,16 @@ class FirewallTest extends Common
             'ip'       => '1.2.3.4',
             'dateTime' => date('Y-m-d H:i:s')
         ];
-        $this->mapper->create($this->cfg->getTempBanTable(), $data);
-        $this->mapper->create($this->cfg->getTempBanTable(), $data);
-        $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
-        $this->mapper->create($this->cfg->getExtendedBanTable(), $data);
-        $this->mapper->create($this->cfg->getWhitelistTable(), $data);
-        $this->mapper->create($this->cfg->getWhitelistTable(), $data);
-        $this->mapper->create($this->cfg->getFailCountTable(), $data);
-        $this->mapper->create($this->cfg->getFailCountTable(), $data);
-        $this->mapper->create($this->cfg->getBlockCountTable(), $data);
-        $this->mapper->create($this->cfg->getBlockCountTable(), $data);
+        $this->dal->create($this->cfg->getTempBanTable(), $data);
+        $this->dal->create($this->cfg->getTempBanTable(), $data);
+        $this->dal->create($this->cfg->getExtendedBanTable(), $data);
+        $this->dal->create($this->cfg->getExtendedBanTable(), $data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $data);
+        $this->dal->create($this->cfg->getFailCountTable(), $data);
+        $this->dal->create($this->cfg->getFailCountTable(), $data);
+        $this->dal->create($this->cfg->getBlockCountTable(), $data);
+        $this->dal->create($this->cfg->getBlockCountTable(), $data);
 
         $elapsedTime = 2;
 
@@ -197,23 +226,23 @@ class FirewallTest extends Common
         $this->firewall->flushExpired();
 
         // test if IPs are flushed from TempBanTable
-        $rows = $this->mapper->findAll($this->cfg->getTempBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getTempBanTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from ExtendedBanTable
-        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from WhitelistTable
-        $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getWhitelistTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from FailCountTable
-        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from BlockCountTable
-        $rows = $this->mapper->findAll($this->cfg->getBlockCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getBlockCountTable(), $this->where);
         $this->assertCount(0, $rows);
     }
 
@@ -223,13 +252,13 @@ class FirewallTest extends Common
     public function testFlushTempBanned()
     {
         // seed
-        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
-        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
+        $this->dal->create($this->cfg->getTempBanTable(), $this->data);
+        $this->dal->create($this->cfg->getTempBanTable(), $this->data);
 
         $this->firewall->flushTempBanned();
 
         // test if IPs are flushed from TempBanTable
-        $rows = $this->mapper->findAll($this->cfg->getTempBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getTempBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
 
@@ -239,13 +268,13 @@ class FirewallTest extends Common
     public function testFlushExtendedBanned()
     {
         // seed
-        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
-        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
+        $this->dal->create($this->cfg->getExtendedBanTable(), $this->data);
+        $this->dal->create($this->cfg->getExtendedBanTable(), $this->data);
 
         $this->firewall->flushExtendedBanned();
 
         // test if IPs are flushed from ExtendedBanTable
-        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
 
@@ -255,12 +284,12 @@ class FirewallTest extends Common
     public function testFlushWhitelisted()
     {
         // seed
-        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
-        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
 
         $this->firewall->flushWhitelisted();
 
-        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
     }
 
@@ -270,38 +299,52 @@ class FirewallTest extends Common
     public function testFlushIp()
     {
         // seed
-        $this->mapper->create($this->cfg->getBlockCountTable(), $this->data);
-        $this->mapper->create($this->cfg->getExtendedBanTable(), $this->data);
-        $this->mapper->create($this->cfg->getFailCountTable(), $this->data);
-        $this->mapper->create($this->cfg->getTempBanTable(), $this->data);
-        $this->mapper->create($this->cfg->getWhitelistTable(), $this->data);
+        $this->dal->create($this->cfg->getBlockCountTable(), $this->data);
+        $this->dal->create($this->cfg->getExtendedBanTable(), $this->data);
+        $this->dal->create($this->cfg->getFailCountTable(), $this->data);
+        $this->dal->create($this->cfg->getTempBanTable(), $this->data);
+        $this->dal->create($this->cfg->getWhitelistTable(), $this->data);
 
         $this->firewall->flushIp($this->testIp);
 
         // test if IPs are flushed from BlockCountTable
-        $rows = $this->mapper->findAll($this->cfg->getBlockCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getBlockCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from ExtendedBanTable
-        $rows = $this->mapper->findAll($this->cfg->getExtendedBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getExtendedBanTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from FailCountTable
-        $rows = $this->mapper->findAll($this->cfg->getFailCountTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getFailCountTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs are flushed from TempBanTable
-        $rows = $this->mapper->findAll($this->cfg->getTempBanTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getTempBanTable(), $this->where);
         $this->assertCount(0, $rows);
 
         // test if IPs is NOT flushed from WhitelistTable
-        $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getWhitelistTable(), $this->where);
         $this->assertCount(1, $rows);
 
         $this->firewall->flushIp($this->testIp, true);
 
         // test if IPs are flushed from WhitelistTable
-        $rows = $this->mapper->findAll($this->cfg->getWhitelistTable(), $this->where);
+        $rows = $this->dal->findAll($this->cfg->getWhitelistTable(), $this->where);
         $this->assertCount(0, $rows);
+    }
+
+    /**
+     * test if a good IP is banned (for this test only: good means not banned)
+     */
+    public function testGoodIpBanned()
+    {
+        $goodIp = '9.9.9.9';
+
+        $this->firewall->banned('example_good_ip');
+
+        $row = $this->dal->findOne($this->cfg->getTempBanTable(), ['ip' => $goodIp]);
+
+        $this->assertNull($row);
     }
 }
