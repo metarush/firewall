@@ -1,6 +1,6 @@
 # metarush/firewall
 
-A firewall library that web apps can use ban IP addresses temporarily or for an
+A firewall library that web apps can use to ban IP addresses temporarily or for an
 extended period of time
 
 ---
@@ -14,8 +14,8 @@ period of 24 hours.
 
 ### Summary
 
- - 5 fails within a 15-minute period = 15-minute temporary lock
- - 5 temporary locks = 24-hour lock
+- 5 fails within a 15-minute period = 15-minute temporary lock
+- 5 temporary locks = 24-hour lock
 
 Note: These settings can be changed
 
@@ -28,19 +28,23 @@ Install via composer as `metarush/firewall`
 1. Create a database (with PDO support e.g., MySQL, SQLite).
 
 2. Create tables with these names:
-
-    - `tempBan`
-    - `extendedBan`
-    - `whitelist`
-    - `failCount`
-    - `blockCount`
-
-    Note: You can use different table names but these are the default names
+   
+   - `mrfwTempBan`
+   
+   - `mrfwExtendedBan`
+   
+   - `mrfwWhitelist`
+   
+   - `mrfwFailCount`
+   
+   - `mrfwBlockCount`
+     
+     Note: You can use different table names but these are the default names
 
 3. Each table must have the following fields:
-
- - `ip` (`STRING` with `45` length )
- - `dateTime` (`STRING` with `19` length)
+   
+   - `ip` (`STRING` with `46` length )
+   - `dateTime` (`STRING` with `19` length)
 
 Use the appropriate column type for your database flavor. E.g., `dateTime`
 will store dates in `Y-m-d H:i:s` format so use `DATETIME` column type if your
@@ -49,44 +53,43 @@ database is MySQL.
 **Sample create table query for MySQL**
 
     CREATE TABLE `tempBan` (
-        `ip` VARCHAR(45),
+        `ip` VARCHAR(46),
         `dateTime` DATETIME
     ) ENGINE=MyISAM;
-
 
 ## Usage with default settings
 
 ### Init library
 
     <?php
-
+    
     $builder = (new \MetaRush\Firewall\Builder)
         ->setDsn('mysql:host=localhost;dbname=yourfirewalldb')
         ->setDbUser('user')
         ->setDbPass('pass');
-
+    
     $fw = $builder->build();
 
 ### Basic usage in your login code
 
     $fw->flushExpired(); // put this on top
-
+    
     if ($fw->banned($_SERVER['REMOTE_ADDR'])) {
         exit('Forbidden'); // or redirect somewhere else
     }
-
+    
     if ($_POST['password'] != 'foo') {
-
+    
         $fw->preventBruteForce($_SERVER['REMOTE_ADDR']);
-
+    
         // show your error page
         exit('Invalid login');
-
+    
     } else {
-
+    
         // release IP from block counters
         $fw->flushIp($_SERVER['REMOTE_ADDR']);
-
+    
         // proceed to login...
     }
 
@@ -134,7 +137,11 @@ If you named your tables differently, let the system know via:
 
 Note: The values displayed in the parameter are their default values. Each of these setter methods have their corresponding getter methods. E.g., `getMaxFailCount();`
 
-## Apply custom settings
+### Set a PSR-3 compatible logger of your choice
+
+    ->setLogger(use Psr\Log\LoggerInterface $logger);
+
+## Apply custom settings example
 
     $builder = (new \MetaRush\Firewall\Builder)
         ->setDsn('mysql:host=localhost;dbname=foo')
@@ -149,11 +156,14 @@ Note: The values displayed in the parameter are their default values. Each of th
         ->setTempBanSeconds(900)
         ->setMaxBlockCount(5)
         ->setExtendedBanSeconds(86400)
-        ->setWhitelistSeconds(2592000);
-
+        ->setWhitelistSeconds(2592000)
+        ->setLogger(new Psr\Log\NullLogger()); // use your own logger
+    
     $fw = $builder->build();
 
-## Available methods
+---
+
+## Service methods
 
 You can use the following methods for your custom needs:
 

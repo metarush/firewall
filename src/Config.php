@@ -2,44 +2,46 @@
 
 namespace MetaRush\Firewall;
 
-use MetaRush\DataMapper;
+use MetaRush\DataAccess;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class Config extends DataMapper\Config
+class Config extends DataAccess\Config
 {
     /**
      * Temp ban table
      *
      * @var string
      */
-    private $tempBanTable = 'tempBan';
+    private $tempBanTable = 'mrfwTempBan';
 
     /**
      * Extended ban table
      *
      * @var string
      */
-    private $extendedBanTable = 'extendedBan';
+    private $extendedBanTable = 'mrfwExtendedBan';
 
     /**
      * Whitelist table
      *
      * @var string
      */
-    private $whitelistTable = 'whitelist';
+    private $whitelistTable = 'mrfwWhitelist';
 
     /**
      * Fail count table
      *
      * @var string
      */
-    private $failCountTable = 'failCount';
+    private $failCountTable = 'mrfwFailCount';
 
     /**
      * Block count table
      *
      * @var string
      */
-    private $blockCountTable = 'blockCount';
+    private $blockCountTable = 'mrfwBlockCount';
 
     /**
      * Number of failed attempts before blocking an IP address (temp ban)
@@ -89,6 +91,13 @@ class Config extends DataMapper\Config
      * @var int
      */
     private $blockCountSeconds = 86400;
+
+    /**
+     * PSR logger
+     *
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
 
     public function getBlockCountSeconds(): int
     {
@@ -220,5 +229,19 @@ class Config extends DataMapper\Config
     {
         $this->whitelistTable = $whitelistTable;
         return $this;
+    }
+
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
+
+    public function getLogger(): LoggerInterface
+    {
+        $this->logger ??= new NullLogger();
+
+        return $this->logger;
     }
 }

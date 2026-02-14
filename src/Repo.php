@@ -2,19 +2,20 @@
 
 namespace MetaRush\Firewall;
 
-use MetaRush\DataMapper;
+use MetaRush\DataAccess\DataAccess;
 
 class Repo
 {
     const IP_COLUMN = 'ip';
     const DATETIME_COLUMN = 'dateTime';
-    private $cfg;
-    private $mapper;
 
-    public function __construct(Config $cfg, DataMapper\DataMapper $mapper)
+    private Config $cfg;
+    private DataAccess $dal;
+
+    public function __construct(Config $cfg, DataAccess $dal)
     {
         $this->cfg = $cfg;
-        $this->mapper = $mapper;
+        $this->dal = $dal;
     }
 
     /**
@@ -32,8 +33,12 @@ class Repo
             self::DATETIME_COLUMN => date('Y-m-d H:i:s')
         ];
 
-        if (!$this->ipLogged($ip, $table) OR $allowDuplicate)
-            $this->mapper->create($table, $data);
+        if (!$this->ipLogged($ip, $table) OR $allowDuplicate) {
+
+            $this->dal->create($table, $data);
+
+            $this->log('IP logged in ' . $table . ': ' . $ip);
+        }
     }
 
     /**
@@ -49,7 +54,7 @@ class Repo
             self::IP_COLUMN => trim($ip)
         ];
 
-        $row = $this->mapper->findOne($table, $where);
+        $row = $this->dal->findOne($table, $where);
 
         return is_array($row);
     }
@@ -67,7 +72,7 @@ class Repo
             self::IP_COLUMN => trim($ip)
         ];
 
-        return count($this->mapper->findAll($table, $where));
+        return count($this->dal->findAll($table, $where));
     }
 
     /**
@@ -83,7 +88,9 @@ class Repo
             self::IP_COLUMN => trim($ip)
         ];
 
-        $this->mapper->delete($table, $where);
+        $this->dal->delete($table, $where);
+
+        $this->log('IP deleted in ' . $table . ': ' . $ip);
     }
 
     /**
@@ -94,7 +101,9 @@ class Repo
      */
     public function emptyTable(string $table): void
     {
-        $this->mapper->delete($table);
+        $this->dal->delete($table);
+
+        $this->log('Table ' . $table . ' emptied');
     }
 
     /**
@@ -113,6 +122,20 @@ class Repo
             self::DATETIME_COLUMN . "  <=  '" . $past . "'"
         ];
 
-        $this->mapper->delete($table, $where);
+        $this->dal->delete($table, $where);
+
+        $this->log('Flushed IPs in ' . $table . ' that are more than ' . $elapsed . 's old');
+    }
+
+    /**
+     *
+     * @param string $msg
+     * @return void
+     */
+    protected function log(string $msg): void
+    {
+        $logger = $this->cfg->getLogger();
+
+        $logger->debug('[MRF] ' . $msg);
     }
 }

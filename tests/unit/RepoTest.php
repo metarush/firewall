@@ -16,7 +16,7 @@ class RepoTest extends Common
     {
         $this->repo->addIp($this->testIp, $this->testTable);
 
-        $row = $this->mapper->findOne($this->testTable, []);
+        $row = $this->dal->findOne($this->testTable, []);
         $this->assertEquals($this->testIp, $row['ip']);
 
         $dateTimeRegex = '~^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$~';
@@ -31,7 +31,7 @@ class RepoTest extends Common
         for ($i = 0; $i < 3; $i++)
             $this->repo->addIp($this->testIp, $this->testTable, true);
 
-        $rows = $this->mapper->findAll($this->testTable, $this->where);
+        $rows = $this->dal->findAll($this->testTable, $this->where);
         $this->assertCount(3, $rows);
     }
 
@@ -42,7 +42,7 @@ class RepoTest extends Common
     public function testIpLogged()
     {
         // seed data
-        $this->mapper->create($this->testTable, $this->data);
+        $this->dal->create($this->testTable, $this->data);
 
         $logged = $this->repo->ipLogged($this->testIp, $this->testTable);
 
@@ -56,7 +56,7 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->mapper->create($this->testTable, $this->data);
+            $this->dal->create($this->testTable, $this->data);
 
         $count = $this->repo->countIp($this->testIp, $this->testTable);
 
@@ -70,11 +70,11 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->mapper->create($this->testTable, $this->data);
+            $this->dal->create($this->testTable, $this->data);
 
         $this->repo->deleteIp($this->testIp, $this->testTable);
 
-        $rows = $this->mapper->findAll($this->testTable, $this->where);
+        $rows = $this->dal->findAll($this->testTable, $this->where);
 
         $this->assertCount(0, $rows);
     }
@@ -86,11 +86,11 @@ class RepoTest extends Common
     {
         // seed data
         for ($i = 0; $i < 5; $i++)
-            $this->mapper->create($this->testTable, $this->data);
+            $this->dal->create($this->testTable, $this->data);
 
         $this->repo->emptyTable($this->testTable);
 
-        $rows = $this->mapper->findAll($this->testTable);
+        $rows = $this->dal->findAll($this->testTable);
 
         $this->assertCount(0, $rows);
     }
@@ -106,7 +106,7 @@ class RepoTest extends Common
         ];
 
         // seed data
-        $this->mapper->create($this->testTable, $data);
+        $this->dal->create($this->testTable, $data);
 
         $elapsedTime = 2;
 
@@ -115,7 +115,7 @@ class RepoTest extends Common
 
         $this->repo->flushIps($this->testTable, $elapsedTime);
 
-        $row = $this->mapper->findOne($this->testTable, $this->where);
+        $row = $this->dal->findOne($this->testTable, $this->where);
         $this->assertNull($row);
     }
 }

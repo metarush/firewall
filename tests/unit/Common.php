@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use MetaRush\Firewall;
-use MetaRush\DataMapper;
+use MetaRush\DataAccess;
 
 /**
  * Common setUp() and tearDown() for unit tests
@@ -37,9 +37,9 @@ class Common extends TestCase
 
     /**
      *
-     * @var DataMapper\DataMapper
+     * @var DataAccess\DataAccess
      */
-    protected $mapper;
+    protected $dal;
 
     /**
      *
@@ -58,7 +58,10 @@ class Common extends TestCase
             ->setExtendedBanTable('extendedBan')
             ->setWhitelistTable('whitelist')
             ->setFailCountTable('failCount')
-            ->setBlockCountTable('blockCount');
+            ->setBlockCountTable('blockCount')
+            ->setMaxBlockCount(5)
+            ->setMaxFailCount(5)
+            ->setLogger(new Psr\Log\NullLogger());
 
         // ----------------------------------------------
         // setup test db
@@ -111,12 +114,12 @@ class Common extends TestCase
         // init main classes
         // ----------------------------------------------
 
-        $builder = (new DataMapper\Builder)
+        $builder = (new DataAccess\Builder)
             ->setDsn($dsn);
 
-        $this->mapper = $builder->build();
+        $this->dal = $builder->build();
 
-        $this->repo = new Firewall\Repo($this->cfg, $this->mapper);
+        $this->repo = new Firewall\Repo($this->cfg, $this->dal);
 
         $this->firewall = new Firewall\Firewall($this->cfg, $this->repo);
     }
@@ -124,7 +127,7 @@ class Common extends TestCase
     public function tearDown(): void
     {
         // close the DB connections so unlink will work
-        unset($this->mapper);
+        unset($this->dal);
         unset($this->pdo);
         unset($this->repo);
         unset($this->firewall);

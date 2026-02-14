@@ -2,14 +2,14 @@
 
 namespace MetaRush\Firewall;
 
-use MetaRush\DataMapper;
+use MetaRush\DataAccess;
 
 class Builder extends Config
 {
 
     public function build(): Firewall
     {
-        $dMBuilder = (new DataMapper\Builder)
+        $dMBuilder = (new DataAccess\Builder)
             ->setAdapter($this->getAdapter())
             ->setDsn($this->getDsn())
             ->setDbUser($this->getDbUser())
