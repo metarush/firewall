@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=7.4",
-        "metarush/data-access": "1.*",
+        "metarush/data-access": "1.* || 2.*",
         "psr/log": "1.* || 2.* || 3.*"
     },
     "require-dev": {

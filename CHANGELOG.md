@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.1.0 - 2026-04-14
+
+### Added
+
+- Internal: Add support for MetaRush\DataAccess v2.*.
+
 ## 2.0.0 - 2026-02-15
 
 ### Changed
